@@ -30,8 +30,7 @@ security:
             remember_me:
                 secret: "%kernel.secret%"
             logout:
-                path: /logout
-                invalidate_session: false
+                path: app_logout
             
 
             # activate different ways to authenticate
