@@ -1,16 +1,19 @@
 security:
+    encoders:
+        # use your user class name here
+        App\Entity\User:
+            # bcrypt or argon21 are recommended
+            # argon21 is more secure, but requires PHP 7.2 or the Sodium extension
+            algorithm: bcrypt
+            cost: 12
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory: { memory: ~ }
-        #some_provider_key:
-
-            # provider type - one of the above
-           # memory:
-                # custom options for that provider
-                #users:
-                #    user:  { password: 'password', roles: [ 'ROLE_USER' ] }
-                #    admin: { password: 'password', roles: [ 'ROLE_ADMIN' ] }
+        #in_memory: #{ memory: ~ }
+        #    user:
+        #        entity: { class: App\Entity\User, property: username }
+        user:
+            entity: { class: App\Entity\User, property: username }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -20,7 +23,15 @@ security:
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
+            form_login:
+                login_path: login
+                remember_me: true
 
+            remember_me:
+                secret: "%kernel.secret%"
+            logout:
+                path: /logout
+                invalidate_session: false
             
 
             # activate different ways to authenticate

@@ -67,6 +67,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->username;
     }
+     
 
     /**
      * Set salt

@@ -44,13 +44,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     public function getCredentials(Request $request)
     {
         $credentials = [
-            'name' => $request->request->get('name'),
+            'username' => $request->request->get('username'),
             'password' => $request->request->get('password'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
         $request->getSession()->set(
             Security::LAST_USERNAME,
-            $credentials['name']
+            $credentials['username']
         );
 
         return $credentials;
@@ -63,7 +63,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             throw new InvalidCsrfTokenException();
         }
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['name' => $credentials['name']]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
 
         if (!$user) {
             // fail authentication with a custom error
@@ -75,15 +75,19 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        $password = $credentials['password'];
+        $pwd = $user->getPassword();
+        if ($password == $pwd){
+        return true;
+        //return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        }
     }
-
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
-        return new RedirectResponse($this->router->generate('user_index'));
+        return new RedirectResponse($this->router->generate('post_index'));
         // For example : return new RedirectResponse($this->router->generate('some_route'));
         //throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
         
