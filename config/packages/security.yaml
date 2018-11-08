@@ -6,7 +6,7 @@ security:
             # argon21 is more secure, but requires PHP 7.2 or the Sodium extension
             #algorithm: bcrypt
             #cost: 12
-        FOS\UserBundle\Model\UserInterface: bcrypt
+        App\Entity\User: bcrypt
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
@@ -33,7 +33,8 @@ security:
 
             #remember_me:
             #    secret: "%kernel.secret%"
-            logout: true
+            logout: ~
+            logout_on_user_change: true 
                 #path: app_logout
                 #target: /login
             
@@ -52,6 +53,6 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        #- { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         #- { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         #- { path: ^/admin/, role: ROLE_ADMIN }

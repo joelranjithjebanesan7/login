@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/user")
  */
-class UserController extends AbstractController
+class UserController extends Controller
 {
     /**
      * @Route("/", name="user_index", methods="GET")
@@ -31,10 +31,12 @@ class UserController extends AbstractController
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
+        $encoder = $this->container->get('security.password_encoder');
+        $encrypted_password = $encoder->encodePassword($user, $user->getPassword());
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            #$user->setRole('ROLE_USER');
+            $user->setPassword($encrypted_password);
             $em->persist($user);
             $em->flush();
 
